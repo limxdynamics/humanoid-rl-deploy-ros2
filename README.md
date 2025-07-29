@@ -72,10 +72,10 @@ You can create an RL deployment development workspace by following these steps:
     cd ~/limx_ws
 
     # Option 1: HTTPS
-    git clone --recurse https://github.com/limxdynamics/humanoid-rl-deploy-ros2.git
+    git clone -b feature/foxy --recurse https://github.com/limxdynamics/humanoid-rl-deploy-ros2.git
 
     # Option 2: SSH
-    git clone --recurse git@github.com:limxdynamics/humanoid-rl-deploy-ros2.git
+    git clone -b feature/foxy --recurse git@github.com:limxdynamics/humanoid-rl-deploy-ros2.git
     ```
     
 - Set the robot model: If not set yet, follow these steps.

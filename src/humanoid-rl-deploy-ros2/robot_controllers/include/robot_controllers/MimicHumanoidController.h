@@ -1,6 +1,6 @@
 // Copyright information
 //
-// © [2024] LimX Dynamics Technology Co., Ltd. All rights reserved.
+// © [2025] LimX Dynamics Technology Co., Ltd. All rights reserved.
 
 #ifndef _LIMX_MIMIC_HUMANOID_CONTROLLER_H_
 #define _LIMX_MIMIC_HUMANOID_CONTROLLER_H_

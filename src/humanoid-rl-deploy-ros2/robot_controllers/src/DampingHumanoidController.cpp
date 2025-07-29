@@ -1,6 +1,6 @@
 // Copyright information
 //
-// © [2024] LimX Dynamics Technology Co., Ltd. All rights reserved.
+// © [2025] LimX Dynamics Technology Co., Ltd. All rights reserved.
 
 #include "robot_controllers/DampingHumanoidController.h"
 
