@@ -51,12 +51,10 @@ public:
    */
   std::string get_name() const override;
 
-  hardware_interface::return_type read() override;
-  hardware_interface::return_type write() override;
-  hardware_interface::status get_status() const override;
-  hardware_interface::return_type start() override;
-  hardware_interface::return_type stop() override;
-  hardware_interface::return_type configure(const hardware_interface::HardwareInfo& info) override;
+  hardware_interface::return_type start();
+  hardware_interface::return_type read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
+  hardware_interface::return_type write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
+  hardware_interface::return_type configure(const hardware_interface::HardwareInfo& info);
 
   /**
    * @brief Retrieves the robot instance.

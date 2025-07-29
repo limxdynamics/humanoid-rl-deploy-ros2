@@ -123,14 +123,7 @@ std::string HardwareBase::get_name() const {
   return "HardwareBase";
 }
 
-/**
- * @brief Reads the current state from the hardware.
- * 
- * Updates joint positions, velocities, efforts, and IMU data from the robot state.
- * 
- * @return hardware_interface::return_type indicating the result of the read operation.
- */
-hardware_interface::return_type HardwareBase::read() {
+hardware_interface::return_type HardwareBase::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
   // Reading robot state
   limxsdk::RobotState robotState = *robotStateBuffer_.readFromRT();
   for (int i = 0; i < robot_->getMotorNumber(); ++i) {
@@ -154,14 +147,7 @@ hardware_interface::return_type HardwareBase::read() {
   return hardware_interface::return_type::OK;
 }
 
-/**
- * @brief Writes the commands to the hardware.
- * 
- * Sends desired joint positions, velocities, efforts, and control gains to the robot.
- * 
- * @return hardware_interface::return_type indicating the result of the write operation.
- */
-hardware_interface::return_type HardwareBase::write() {
+hardware_interface::return_type HardwareBase::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
   // Writing commands to robot
   if (can_publish_cmd_) {
     for (int i = 0; i < robot_->getMotorNumber(); ++i) {
@@ -181,34 +167,22 @@ hardware_interface::return_type HardwareBase::write() {
 }
 
 /**
- * @brief Gets the status of the hardware.
- * 
- * @return The status of the hardware.
- */
-hardware_interface::status HardwareBase::get_status() const { return hardware_interface::status::UNKNOWN; }
-
-/**
- * @brief Starts the hardware.
- * 
- * @return hardware_interface::return_type indicating the result of the start operation.
- */
-hardware_interface::return_type HardwareBase::start() { return hardware_interface::return_type::OK; }
-
-/**
- * @brief Stops the hardware.
- * 
- * @return hardware_interface::return_type indicating the result of the stop operation.
- */
-hardware_interface::return_type HardwareBase::stop() { return hardware_interface::return_type::OK; }
-
-/**
  * @brief Configures the hardware with the given information.
  * 
  * @param info The hardware information to configure.
  * @return hardware_interface::return_type indicating the result of the configure operation.
  */
 hardware_interface::return_type HardwareBase::configure(const hardware_interface::HardwareInfo& info) {
-  info_ = info; 
+  info_ = info;
+  return hardware_interface::return_type::OK;
+}
+
+/**
+ * @brief Starts the hardware.
+ * 
+ * @return hardware_interface::return_type indicating the result of the start operation.
+ */
+hardware_interface::return_type HardwareBase::start() {
   return hardware_interface::return_type::OK;
 }
 

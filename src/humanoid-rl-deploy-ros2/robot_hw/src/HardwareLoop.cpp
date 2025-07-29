@@ -47,7 +47,14 @@ HardwareLoop::HardwareLoop(std::unique_ptr<robot_hw::HardwareBase> &hardware)
     hardware->configure(hardwareinfo);
     hardware->start();
 
-    resourceManagerPtr->import_component(std::move(hardware));
+    resourceManagerPtr->import_component(std::move(hardware), hardwareinfo);
+    
+    auto components_status_map = resourceManagerPtr->get_components_status();
+    for (auto & component: components_status_map) {
+      rclcpp_lifecycle::State state(lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE, 
+                                      hardware_interface::lifecycle_state_names::ACTIVE);
+      resourceManagerPtr->set_component_state(component.first, state);
+    }
 
     // Declare parameters robot_controllers
     std::vector<std::string> controllers;
@@ -96,7 +103,7 @@ bool HardwareLoop::switchController(const std::string &controller_name) {
   // Check if the controller is already active
   auto loaded_controllers = controller_manager_->get_loaded_controllers();
   for (auto &controller : loaded_controllers) {
-    std::string current_state_label = controller.c->get_current_state().label();
+    std::string current_state_label = controller.c->get_state().label();
     if (current_state_label == "active") {
       if (controller.info.name != controller_name) {
         stop_controllers.push_back(controller.info.name);
@@ -130,7 +137,7 @@ bool HardwareLoop::startController(const std::string &controller_name) {
   // Check if the controller is already active
   auto loaded_controllers = controller_manager_->get_loaded_controllers();
   for (auto &controller : loaded_controllers) {
-    std::string current_state_label = controller.c->get_current_state().label();
+    std::string current_state_label = controller.c->get_state().label();
     if (controller.info.name == controller_name && current_state_label == "active") {
       // RCLCPP_INFO(rclcpp::get_logger("HardwareLoop"),
       //             "Controller '%s' is already active. Skipping start.", controller_name.c_str());
@@ -162,7 +169,7 @@ bool HardwareLoop::stopController(const std::string &controller_name) {
   // Check if the controller is already active
   auto loaded_controllers = controller_manager_->get_loaded_controllers();
   for (auto &controller : loaded_controllers) {
-    std::string current_state_label = controller.c->get_current_state().label();
+    std::string current_state_label = controller.c->get_state().label();
     if (controller.info.name == controller_name && current_state_label == "active") {
       std::vector<std::string> start_controllers = {};
       std::vector<std::string> stop_controllers = {controller_name};
@@ -261,14 +268,17 @@ void HardwareLoop::update() {
                 cycle_time_error - cycleThreshold_, elapsedTime_.seconds(), cycleThreshold_);
   }
 
+  rclcpp::Time time = rclcpp::Time(0, 0, controller_manager_->get_node_clock_interface()->get_clock()->get_clock_type());
+  rclcpp::Duration period = rclcpp::Duration::from_seconds(0.01);
+
   // Input: Get the hardware's state
-  controller_manager_->read();
+  controller_manager_->read(time, period);
 
   // Control: Let the controller compute the new command (via the controller manager)
-  controller_manager_->update();
+  controller_manager_->update(time, period);
 
   // Output: Send the new command to hardware
-  controller_manager_->write();
+  controller_manager_->write(time, period);
 
   // Sleep until the next update
   const auto sleepTill = currentTime + std::chrono::duration_cast<std::chrono::high_resolution_clock::duration>(desiredDuration);

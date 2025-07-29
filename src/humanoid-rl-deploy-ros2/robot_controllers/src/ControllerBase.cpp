@@ -7,16 +7,11 @@
 #include "controller_interface/helpers.hpp"
 
 namespace robot_controllers {
-controller_interface::return_type ControllerBase::init(const std::string &controller_name) {
-  auto ret = controller_interface::ControllerInterface::init(controller_name);
-  if (ret != controller_interface::return_type::OK) {
-    return ret;
-  }
-
-  return (this->onInit() ? controller_interface::return_type::OK : controller_interface::return_type::ERROR);
+controller_interface::CallbackReturn ControllerBase::on_init() {
+  return (this->onInit() ? controller_interface::CallbackReturn::SUCCESS : controller_interface::CallbackReturn::ERROR);
 }
 
-controller_interface::return_type ControllerBase::update() {
+controller_interface::return_type ControllerBase::update(const rclcpp::Time& , const rclcpp::Duration&) {
   this->onUpdate();
   return controller_interface::return_type::OK;
 }

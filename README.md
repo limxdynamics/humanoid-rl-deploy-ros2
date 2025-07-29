@@ -5,28 +5,28 @@
 
 ## 1. Deployment Environment Configuration
 
-- Install ROS 2 Foxy: Set up a ROS 2 Foxy-based algorithm Development Environment on the Ubuntu 20.04 operating system. For installation, please refer to the documentation: https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html, and choose "ros-foxy-desktop" for installation. After the installation of ROS 2 Foxy is completed, enter the following Shell commands in the Bash end point to install the libraries required by the Development Environment:
+- Install ROS 2 Iron: Set up a ROS 2 Iron-based algorithm Development Environment on the Ubuntu 20.04 operating system. For installation, please refer to the documentation: https://docs.ros.org/en/iron/Installation/Ubuntu-Install-Debians.html, and choose "ros-iron-desktop" for installation. After the installation of ROS 2 Iron is completed, enter the following Shell commands in the Bash end point to install the libraries required by the Development Environment:
 
     ```bash
     sudo apt update
-    sudo apt install ros-foxy-urdf \
-                ros-foxy-urdfdom \
-                ros-foxy-urdfdom-headers \
-                ros-foxy-kdl-parser \
-                ros-foxy-hardware-interface \
-                ros-foxy-controller-manager \
-                ros-foxy-controller-interface \
-                ros-foxy-controller-manager-msgs \
-                ros-foxy-control-msgs \
-                ros-foxy-controller-interface \
-                ros-foxy-gazebo-* \
-                ros-foxy-rviz* \
-                ros-foxy-rqt-gui \
-                ros-foxy-rqt-robot-steering \
-                ros-foxy-plotjuggler* \
-                ros-foxy-control-toolbox \
-                ros-foxy-ros2-control \
-                ros-foxy-ros2-controllers \
+    sudo apt install ros-iron-urdf \
+                ros-iron-urdfdom \
+                ros-iron-urdfdom-headers \
+                ros-iron-kdl-parser \
+                ros-iron-hardware-interface \
+                ros-iron-controller-manager \
+                ros-iron-controller-interface \
+                ros-iron-controller-manager-msgs \
+                ros-iron-control-msgs \
+                ros-iron-controller-interface \
+                ros-iron-gazebo-* \
+                ros-iron-rviz* \
+                ros-iron-rqt-gui \
+                ros-iron-rqt-robot-steering \
+                ros-iron-plotjuggler* \
+                ros-iron-control-toolbox \
+                ros-iron-ros2-control \
+                ros-iron-ros2-controllers \
                 ros-dev-tools \
                 cmake build-essential libpcl-dev libeigen3-dev libopencv-dev libmatio-dev \
                 python3-pip libboost-all-dev libtbb-dev liburdfdom-dev liborocos-kdl-dev -y
@@ -137,7 +137,7 @@ You can create an RL deployment development workspace by following these steps:
     conda deactivate
 
     # Set up the ROS compilation environment
-    source /opt/ros/foxy/setup.bash
+    source /opt/ros/iron/setup.bash
 
     # Compile the algorithm code
     cd ~/limx_ws/humanoid-rl-deploy-ros2
@@ -152,7 +152,7 @@ You can create an RL deployment development workspace by following these steps:
     conda deactivate
 
     # Set up the ROS compilation environment
-    source /opt/ros/foxy/setup.bash
+    source /opt/ros/iron/setup.bash
 
     # Run the algorithm
     cd ~/limx_ws/humanoid-rl-deploy-ros2
@@ -196,7 +196,7 @@ You can create an RL deployment development workspace by following these steps:
   conda deactivate
 
   # Set up the ROS compilation environment
-  source /opt/ros/foxy/setup.bash
+  source /opt/ros/iron/setup.bash
 
   # Compile the algorithm code
   cd ~/limx_ws/humanoid-rl-deploy-ros2
@@ -217,7 +217,7 @@ You can create an RL deployment development workspace by following these steps:
   conda deactivate
 
   # Set up the ROS compilation environment
-  source /opt/ros/foxy/setup.bash
+  source /opt/ros/iron/setup.bash
 
   # Run the algorithm
   cd ~/limx_ws/humanoid-rl-deploy-ros2

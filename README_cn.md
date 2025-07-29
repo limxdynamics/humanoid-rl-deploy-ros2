@@ -5,34 +5,31 @@
 
 ## 1. 部署环境配置
 
-- 安装ROS 2 Foxy：在 Ubuntu 20.04 操作系统上建立基于 ROS 2 Foxy 的算法开发环境。 安装请参考文档： https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html ，选择“ros-foxy-desktop”进行安装。ROS 2 Foxy 安装完成后，Bash 终端输入以下 Shell 命令，安装开发环境所依赖的库：
+- 安装ROS 2 Iron：在 Ubuntu 22.04 操作系统上建立基于 ROS 2 Iron 的算法开发环境。 安装请参考文档： https://docs.ros.org/en/iron/Installation/Ubuntu-Install-Debians.html ，选择“ros-iron-desktop”进行安装。ROS 2 Iron 安装完成后，Bash 终端输入以下 Shell 命令，安装开发环境所依赖的库：
 
     ```
     sudo apt update
-    sudo apt install ros-foxy-urdf \
-                     ros-foxy-urdfdom \
-                     ros-foxy-urdfdom-headers \
-                     ros-foxy-kdl-parser \
-                     ros-foxy-hardware-interface \
-                     ros-foxy-controller-manager \
-                     ros-foxy-controller-interface \
-                     ros-foxy-controller-manager-msgs \
-                     ros-foxy-control-msgs \
-                     ros-foxy-controller-interface \
-                     ros-foxy-gazebo-* \
-                     ros-foxy-rviz* \
-                     ros-foxy-rqt-gui \
-                     ros-foxy-rqt-robot-steering \
-                     ros-foxy-plotjuggler* \
-                     ros-foxy-control-toolbox \
-                     ros-foxy-ros2-control \
-                     ros-foxy-ros2-controllers \
-                     ros-foxy-robot-controllers \
-                     ros-foxy-robot-controllers-interface \
-                     ros-foxy-robot-controllers-msgs \
-                     ros-dev-tools \
-                     cmake build-essential libpcl-dev libeigen3-dev libopencv-dev libmatio-dev \
-                     python3-pip libboost-all-dev libtbb-dev liburdfdom-dev liborocos-kdl-dev -y
+    sudo apt install ros-iron-urdf \
+                ros-iron-urdfdom \
+                ros-iron-urdfdom-headers \
+                ros-iron-kdl-parser \
+                ros-iron-hardware-interface \
+                ros-iron-controller-manager \
+                ros-iron-controller-interface \
+                ros-iron-controller-manager-msgs \
+                ros-iron-control-msgs \
+                ros-iron-controller-interface \
+                ros-iron-gazebo-* \
+                ros-iron-rviz* \
+                ros-iron-rqt-gui \
+                ros-iron-rqt-robot-steering \
+                ros-iron-plotjuggler* \
+                ros-iron-control-toolbox \
+                ros-iron-ros2-control \
+                ros-iron-ros2-controllers \
+                ros-dev-tools \
+                cmake build-essential libpcl-dev libeigen3-dev libopencv-dev libmatio-dev \
+                python3-pip libboost-all-dev libtbb-dev liburdfdom-dev liborocos-kdl-dev -y
     ```
 
     
@@ -146,7 +143,7 @@
     conda deactivate
     
     # 设置ROS编译环境
-    source /opt/ros/foxy/setup.bash
+    source /opt/ros/iron/setup.bash
     
     # 编译算法代码
     cd ~/limx_ws/humanoid-rl-deploy-ros2
@@ -161,7 +158,7 @@
     conda deactivate
     
     # 设置ROS编译环境
-    source /opt/ros/foxy/setup.bash
+    source /opt/ros/iron/setup.bash
     
     # 运行算法
     cd ~/limx_ws/humanoid-rl-deploy-ros2
@@ -205,7 +202,7 @@
   conda deactivate
   
   # 设置ROS编译环境
-  source /opt/ros/foxy/setup.bash
+  source /opt/ros/iron/setup.bash
   
   # 编译算法代码
   cd ~/limx_ws/humanoid-rl-deploy-ros2
@@ -226,7 +223,7 @@
   conda deactivate
   
   # 设置ROS编译环境
-  source /opt/ros/foxy/setup.bash
+  source /opt/ros/iron/setup.bash
   
   # 运行算法
   cd ~/limx_ws/humanoid-rl-deploy-ros2
