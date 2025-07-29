@@ -1,92 +1,230 @@
-# humanoid-rl-deploy-ros2
+# English | [中文](README_cn.md)
+# Deployment of Training Results
 
 
 
-## Getting started
+## 1. Deployment Environment Configuration
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- Install ROS 2 Foxy: Set up a ROS 2 Foxy-based algorithm Development Environment on the Ubuntu 20.04 operating system. For installation, please refer to the documentation: https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html, and choose "ros-foxy-desktop" for installation. After the installation of ROS 2 Foxy is completed, enter the following Shell commands in the Bash end point to install the libraries required by the Development Environment:
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+    ```bash
+    sudo apt update
+    sudo apt install ros-foxy-urdf \
+                ros-foxy-urdfdom \
+                ros-foxy-urdfdom-headers \
+                ros-foxy-kdl-parser \
+                ros-foxy-hardware-interface \
+                ros-foxy-controller-manager \
+                ros-foxy-controller-interface \
+                ros-foxy-controller-manager-msgs \
+                ros-foxy-control-msgs \
+                ros-foxy-controller-interface \
+                ros-foxy-gazebo-* \
+                ros-foxy-rviz* \
+                ros-foxy-rqt-gui \
+                ros-foxy-rqt-robot-steering \
+                ros-foxy-plotjuggler* \
+                ros-foxy-control-toolbox \
+                ros-foxy-ros2-control \
+                ros-foxy-ros2-controllers \
+                ros-dev-tools \
+                cmake build-essential libpcl-dev libeigen3-dev libopencv-dev libmatio-dev \
+                python3-pip libboost-all-dev libtbb-dev liburdfdom-dev liborocos-kdl-dev -y
+    ```
 
-## Add your files
+    
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+- Install the onnxruntime dependency, download link:https://github.com/microsoft/onnxruntime/releases/tag/v1.10.0. Please choose the appropriate version to download according to your operating system and platform. For example, on Ubuntu 20.04 x86_64, please follow the steps below for installation:
+  
+    ```Bash
+    wget https://github.com/microsoft/onnxruntime/releases/download/v1.10.0/onnxruntime-linux-x64-1.10.0.tgz
+    
+    tar xvf onnxruntime-linux-x64-1.10.0.tgz
+    
+    sudo cp -a onnxruntime-linux-x64-1.10.0/include/* /usr/include
+    sudo cp -a onnxruntime-linux-x64-1.10.0/lib/* /usr/lib
+    ```
 
-```
-cd existing_repo
-git remote add origin http://gitlab-gitlab-ce1/software/sdk/github/distro/humanoid-rl-deploy-ros2.git
-git branch -M master
-git push -uf origin master
-```
 
-## Integrate with your tools
 
-- [ ] [Set up project integrations](http://gitlab-gitlab-ce1/software/sdk/github/distro/humanoid-rl-deploy-ros2/-/settings/integrations)
+## 2. Create a Workspace
 
-## Collaborate with your team
+You can create an RL deployment development workspace by following these steps:
+- Open a Bash terminal.
+- Create a new directory to store the workspace. For example, you can create a directory named "limx_ws" in the user's home directory:
+    ```Bash
+    mkdir -p ~/limx_ws/src
+    ```
+    
+- Download the MuJoCo simulator
+    ```Bash
+    cd ~/limx_ws
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+    # Option 1: HTTPS
+    git clone --recurse https://github.com/limxdynamics/humanoid-mujoco-sim.git
 
-## Test and Deploy
+    # Option 2: SSH
+    git clone --recurse git@github.com:limxdynamics/humanoid-mujoco-sim.git
+    ```
+    
+- Download the motion control algorithm:
+    ```Bash
+    cd ~/limx_ws
 
-Use the built-in continuous integration in GitLab.
+    # Option 1: HTTPS
+    git clone --recurse https://github.com/limxdynamics/humanoid-rl-deploy-ros2.git
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+    # Option 2: SSH
+    git clone --recurse git@github.com:limxdynamics/humanoid-rl-deploy-ros2.git
+    ```
+    
+- Set the robot model: If not set yet, follow these steps.
 
-***
+  - List the available robot types using the Shell command `tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config` ：
 
-# Editing this README
+    ```
+    cd ~/limx_ws/humanoid-rl-deploy-2/src
+    tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config
+    humanoid-rl-deploy-ros2/robot_controllers/config
+    └── HU_D03_03
+    
+    ```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+  - Take `HU_D03_03` (please replace it with the actual robot type) as an example to set the robot model type:
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+    ```
+    echo 'export ROBOT_TYPE=HU_D03_03' >> ~/.bashrc && source ~/.bashrc
+    ```
 
-## Name
-Choose a self-explaining name for your project.
+### 4. Simulation Debugging
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+- Run the MuJoco simulator (Python 3.8 or above is recommended)
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+  - Open a Bash terminal.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+  - Install the motion control development library:
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+    - Linux x86_64 environment
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+      ```bash
+      cd ~/limx_ws
+      pip install humanoid-mujoco-sim/limxsdk-lowlevel/python3/amd64/limxsdk-*-py3-none-any.whl
+      ```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+    - Linux aarch64 environment
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+      ```bash
+      cd ~/limx_ws
+      pip install humanoid-mujoco-sim/limxsdk-lowlevel/python3/aarch64/limxsdk-*-py3-none-any.whl
+      ```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+  - Run the MuJoCo simulator:
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+    ```bash
+    cd ~/limx_ws
+    python humanoid-mujoco-sim/simulator.py
+    ```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+- Run the algorithm
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+  - Open a Bash terminal.
 
-## License
-For open source projects, say how it is licensed.
+  - Navigate to your workspace and complete the compilation:
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+    ```bash
+    # If you have Conda installed, temporarily deactivate the Conda environment
+    # Because Conda may interfere with the ROS runtime environment settings
+    conda deactivate
+
+    # Set up the ROS compilation environment
+    source /opt/ros/foxy/setup.bash
+
+    # Compile the algorithm code
+    cd ~/limx_ws/humanoid-rl-deploy-ros2
+    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ```
+
+  - Run the algorithm
+
+    ```bash
+    # If you have Conda installed, temporarily deactivate the Conda environment
+    # Because Conda may interfere with the ROS runtime environment settings
+    conda deactivate
+
+    # Set up the ROS compilation environment
+    source /opt/ros/foxy/setup.bash
+
+    # Run the algorithm
+    cd ~/limx_ws/humanoid-rl-deploy-ros2
+    source install/setup.bash
+    ros2 launch robot_hw humanoid_hw_sim.launch.py
+    ```
+
+    ![](doc/simulator.gif)
+
+- Virtual remote controller: You can use a virtual remote controller to operate the robot during simulation. The following are the specific steps to use the virtual remote controller.
+
+  - Open a Bash terminal.
+
+  - Run the virtual remote controller
+
+    ```
+    ~/limx_ws/humanoid-mujoco-sim/robot-joystick/robot-joystick
+    ```
+
+    ![](doc/robot-joystick.png)
+
+
+  - At this point, you can use the virtual remote controller to control the robot.
+
+    | **Button** | **Mode**         | **Description**                                                    |
+    | -------- | ---------------- | ----------------------------------------------------------- |
+    | L1+Y     | Switch to standing mode   | If the robot cannot stand, click "Reset" in the MuJoco interface to reset it. |
+    | L1+B     | Switch to greeting mode |                                                             |
+
+### 4. Real Machine Debugging
+
+- Set your computer's IP: Ensure that your computer is connected to the robot body through an external network port. Set your computer's IP address to: `10.192.1.200`, and you can successfully ping `10.192.1.2` using the Shell command `ping 10.192.1.2`. Set the IP of your development computer as shown in the following figure:
+
+  ![img](doc/ip.png)
+
+- Algorithm compilation:
+
+  ```bash
+  # If you have Conda installed, temporarily deactivate the Conda environment
+  # Because Conda may interfere with the ROS runtime environment settings
+  conda deactivate
+
+  # Set up the ROS compilation environment
+  source /opt/ros/foxy/setup.bash
+
+  # Compile the algorithm code
+  cd ~/limx_ws/humanoid-rl-deploy-ros2
+  colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+  ```
+
+- Robot preparation:
+
+  - Hang the robot with the hooks on the left and right shoulders.
+  - After turning on the power, press the right joystick button on the remote controller to start the robot's motors.
+  - Press the remote controller buttons `L1 + START` to switch to developer mode. In this mode, users can develop their own motion control algorithms. (This mode will remain effective after the next startup; to exit developer mode, press `L1 + L2 + START`).
+
+- Real machine deployment and operation. In the Bash terminal, simply use the following Shell command to start the control algorithm:
+
+  ```bash
+  # If you have Conda installed, temporarily deactivate the Conda environment
+  # Because Conda may interfere with the ROS runtime environment settings
+  conda deactivate
+
+  # Set up the ROS compilation environment
+  source /opt/ros/foxy/setup.bash
+
+  # Run the algorithm
+  cd ~/limx_ws/humanoid-rl-deploy-ros2
+  source install/setup.bash
+  ros2 launch robot_hw humanoid_hw.launch.py
+  ```
+
+- At this point, you can use the remote controller button `L1 + Y` to make the robot enter the standing mode.
+
+- Press `L1 + B` on the remote controller to control the robot to greet.
