@@ -5,28 +5,28 @@
 
 ## 1. Deployment Environment Configuration
 
-- Install ROS 2 Iron: Set up a ROS 2 Iron-based algorithm Development Environment on the Ubuntu 22.04 operating system. For installation, please refer to the documentation: https://docs.ros.org/en/iron/Installation/Ubuntu-Install-Debians.html, and choose "ros-iron-desktop" for installation. After the installation of ROS 2 Iron is completed, enter the following Shell commands in the Bash end point to install the libraries required by the Development Environment:
+- Install ROS 2 Humble: Set up a ROS 2 Humble-based algorithm Development Environment on the Ubuntu 22.04 operating system. For installation, please refer to the documentation: https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html, and choose "ros-humble-desktop" for installation. After the installation of ROS 2 Humble is completed, enter the following Shell commands in the Bash end point to install the libraries required by the Development Environment:
 
     ```bash
     sudo apt update
-    sudo apt install ros-iron-urdf \
-                ros-iron-urdfdom \
-                ros-iron-urdfdom-headers \
-                ros-iron-kdl-parser \
-                ros-iron-hardware-interface \
-                ros-iron-controller-manager \
-                ros-iron-controller-interface \
-                ros-iron-controller-manager-msgs \
-                ros-iron-control-msgs \
-                ros-iron-controller-interface \
-                ros-iron-gazebo-* \
-                ros-iron-rviz* \
-                ros-iron-rqt-gui \
-                ros-iron-rqt-robot-steering \
-                ros-iron-plotjuggler* \
-                ros-iron-control-toolbox \
-                ros-iron-ros2-control \
-                ros-iron-ros2-controllers \
+    sudo apt install ros-humble-urdf \
+                ros-humble-urdfdom \
+                ros-humble-urdfdom-headers \
+                ros-humble-kdl-parser \
+                ros-humble-hardware-interface \
+                ros-humble-controller-manager \
+                ros-humble-controller-interface \
+                ros-humble-controller-manager-msgs \
+                ros-humble-control-msgs \
+                ros-humble-controller-interface \
+                ros-humble-gazebo-* \
+                ros-humble-rviz* \
+                ros-humble-rqt-gui \
+                ros-humble-rqt-robot-steering \
+                ros-humble-plotjuggler* \
+                ros-humble-control-toolbox \
+                ros-humble-ros2-control \
+                ros-humble-ros2-controllers \
                 ros-dev-tools \
                 cmake build-essential libpcl-dev libeigen3-dev libopencv-dev libmatio-dev \
                 python3-pip libboost-all-dev libtbb-dev liburdfdom-dev liborocos-kdl-dev -y
@@ -138,7 +138,7 @@ You can create an RL deployment development workspace by following these steps:
     conda deactivate
 
     # Set up the ROS compilation environment
-    source /opt/ros/iron/setup.bash
+    source /opt/ros/humble/setup.bash
 
     # Compile the algorithm code
     cd ~/limx_ws/humanoid-rl-deploy-ros2
@@ -153,7 +153,7 @@ You can create an RL deployment development workspace by following these steps:
     conda deactivate
 
     # Set up the ROS compilation environment
-    source /opt/ros/iron/setup.bash
+    source /opt/ros/humble/setup.bash
 
     # Run the algorithm
     cd ~/limx_ws/humanoid-rl-deploy-ros2
@@ -197,7 +197,7 @@ You can create an RL deployment development workspace by following these steps:
   conda deactivate
 
   # Set up the ROS compilation environment
-  source /opt/ros/iron/setup.bash
+  source /opt/ros/humble/setup.bash
 
   # Compile the algorithm code
   cd ~/limx_ws/humanoid-rl-deploy-ros2
@@ -218,7 +218,7 @@ You can create an RL deployment development workspace by following these steps:
   conda deactivate
 
   # Set up the ROS compilation environment
-  source /opt/ros/iron/setup.bash
+  source /opt/ros/humble/setup.bash
 
   # Run the algorithm
   cd ~/limx_ws/humanoid-rl-deploy-ros2
