@@ -208,7 +208,7 @@ You can create an RL deployment development workspace by following these steps:
 
   - Hang the robot with the hooks on the left and right shoulders.
   - After turning on the power, press the right joystick button on the remote controller to start the robot's motors.
-  - Press the remote controller buttons `L1 + START` to switch to developer mode. In this mode, users can develop their own motion control algorithms. (This mode will remain effective after the next startup; to exit developer mode, press `L1 + L2 + START`).
+  - Press the remote controller buttons `R1 + DOWN` to switch to developer mode. In this mode, users can develop their own motion control algorithms. (This mode will remain effective after the next startup; to exit developer mode, press `R1 + LEFT`).
 
 - Real machine deployment and operation. In the Bash terminal, simply use the following Shell command to start the control algorithm:
 
