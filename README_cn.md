@@ -107,7 +107,7 @@
     echo 'export ROBOT_TYPE=HU_D04_01' >> ~/.bashrc && source ~/.bashrc
     ```
 
-### 4、仿真调试
+### 3、仿真调试
 
 - 运行MuJoco 仿真器（推荐Pyhon 3.8 及以上版本）
 
@@ -236,6 +236,6 @@
   ros2 launch robot_hw humanoid_hw.launch.py
   ```
 
-- 这时您可以通过遥控器按键`L1 + Y`让机器人进入站立模式。
+- 这时您可以通过遥控器按键`L1 + △`让机器人进入站立模式。
 
-- 遥控器按`L1 + B`控制机器人打招呼。
+- 遥控器按`L1 + 〇`控制机器人打招呼。

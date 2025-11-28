@@ -97,7 +97,7 @@ You can create an RL deployment development workspace by following these steps:
     echo 'export ROBOT_TYPE=HU_D04_01' >> ~/.bashrc && source ~/.bashrc
     ```
 
-### 4. Simulation Debugging
+### 3. Simulation Debugging
 
 - Run the MuJoco simulator (Python 3.8 or above is recommended)
 
@@ -226,6 +226,6 @@ You can create an RL deployment development workspace by following these steps:
   ros2 launch robot_hw humanoid_hw.launch.py
   ```
 
-- At this point, you can use the remote controller button `L1 + Y` to make the robot enter the standing mode.
+- At this point, you can use the remote controller button `L1 + △` to make the robot enter the standing mode.
 
-- Press `L1 + B` on the remote controller to control the robot to greet.
+- Press `L1 + 〇` on the remote controller to control the robot to greet.
