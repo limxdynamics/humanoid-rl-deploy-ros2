@@ -83,7 +83,7 @@ You can create an RL deployment development workspace by following these steps:
   - List the available robot types using the Shell command `tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config` ：
 
     ```
-    cd ~/limx_ws/humanoid-rl-deploy-2/src
+    cd ~/limx_ws/humanoid-rl-deploy-ros2/src
     tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config
     humanoid-rl-deploy-ros2/robot_controllers/config
     ├── HU_D03_03
