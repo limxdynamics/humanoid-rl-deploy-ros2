@@ -89,7 +89,7 @@
   - 通过 Shell 命令 `tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config` 列出可用的机器人类型：
 
     ```
-    cd ~/limx_ws/humanoid-rl-deploy-2/src
+    cd ~/limx_ws/humanoid-rl-deploy-ros2/src
     tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config
     humanoid-rl-deploy-ros2/robot_controllers/config
     ├── HU_D03_03
