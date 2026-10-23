@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="doc/banner.png" alt="humanoid-rl-deploy-ros2：LimX HU_D04 人形机器人在 ONNX 策略驱动下挥手" width="100%">
+  <img src="doc/banner.png" alt="humanoid-rl-deploy-ros2：笔记本上用 ros2 launch 加载 policy.onnx，把关节指令发给 LimX HU_D04 人形机器人，机器人挥手" width="100%">
 </p>
 
 <p align="center">
