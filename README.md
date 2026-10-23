@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="doc/banner.png" alt="humanoid-rl-deploy-ros2: a laptop runs ros2 launch with policy.onnx and sends joint commands to the LimX HU_D04 humanoid, which waves" width="100%">
+  <img src="doc/banner.png" alt="humanoid-rl-deploy-ros2: the HU_D04 humanoid waves in MuJoCo, and the same policy.onnx is deployed to the real robot, which makes the same motion" width="100%">
 </p>
 
 <p align="center">
