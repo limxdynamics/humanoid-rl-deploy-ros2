@@ -69,6 +69,7 @@ pip install humanoid-mujoco-sim/limxsdk-lowlevel/python3/amd64/limxsdk-*.whl
 python humanoid-mujoco-sim/simulator.py
 
 # 终端 2：控制器
+conda deactivate   # 装了 Conda 要先退出，它会覆盖 ROS 的环境设置
 source /opt/ros/humble/setup.bash
 cd ~/limx_ws/humanoid-rl-deploy-ros2
 colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
@@ -81,9 +82,11 @@ ros2 launch robot_hw humanoid_hw_sim.launch.py
 
 ## 1. 部署环境配置
 
-- 安装ROS 2 Humble：在 Ubuntu 22.04 操作系统上建立基于 ROS 2 Humble 的算法开发环境。 安装请参考文档： https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html ，选择“ros-humble-desktop”进行安装。ROS 2 Humble 安装完成后，Bash 终端输入以下 Shell 命令，安装开发环境所依赖的库：
+- **安装 ROS 2 Humble**（Ubuntu 22.04）。按
+  https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html 的说明安装，选择
+  `ros-humble-desktop`。装完后在 Bash 终端执行下面的命令，安装编译所需的库：
 
-    ```
+    ```bash
     sudo apt update
     sudo apt install ros-humble-urdf \
                 ros-humble-urdfdom \
@@ -94,7 +97,6 @@ ros2 launch robot_hw humanoid_hw_sim.launch.py
                 ros-humble-controller-interface \
                 ros-humble-controller-manager-msgs \
                 ros-humble-control-msgs \
-                ros-humble-controller-interface \
                 ros-humble-gazebo-* \
                 ros-humble-rviz* \
                 ros-humble-rqt-gui \
@@ -105,84 +107,94 @@ ros2 launch robot_hw humanoid_hw_sim.launch.py
                 ros-humble-ros2-controllers \
                 ros-dev-tools \
                 cmake build-essential libpcl-dev libeigen3-dev libopencv-dev libmatio-dev \
-                python3-pip libboost-all-dev libtbb-dev liburdfdom-dev liborocos-kdl-dev -y
+                python3-pip libboost-all-dev libtbb-dev liburdfdom-dev liborocos-kdl-dev \
+                tree -y
     ```
 
-    
+- **安装 ONNX Runtime。** 从
+  https://github.com/microsoft/onnxruntime/releases/tag/v1.10.0 下载对应平台的版本。
+  Ubuntu 22.04 x86_64 按下面步骤：
 
-- 安装onnxruntime依赖，下载连接：https://github.com/microsoft/onnxruntime/releases/tag/v1.10.0  。请您根据自己的操作系统和平台选择合适版本下载。如在Ubuntu 20.04 x86_64，请按下面步骤进行安装：
-  
-    ```Bash
+    ```bash
     wget https://github.com/microsoft/onnxruntime/releases/download/v1.10.0/onnxruntime-linux-x64-1.10.0.tgz
-    
+
     tar xvf onnxruntime-linux-x64-1.10.0.tgz
-    
+
     sudo cp -a onnxruntime-linux-x64-1.10.0/include/* /usr/include
     sudo cp -a onnxruntime-linux-x64-1.10.0/lib/* /usr/lib
     ```
 
-
-
 ## 2. 创建工作空间
 
-可以按照以下步骤，创建一个RL部署开发工作空间：
+- 创建一个目录存放工作空间，例如用户主目录下的 `limx_ws`：
 
-- 打开一个Bash终端。
-
-- 创建一个新目录来存放工作空间。例如，可以在用户的主目录下创建一个名为“limx_ws”的目录：
-
-  ```Bash
+  ```bash
   mkdir -p ~/limx_ws
   ```
 
-- 下载 MuJoCo 仿真器
+- 下载 MuJoCo 仿真器：
 
-  ```Bash
+  ```bash
   cd ~/limx_ws
-  
+
   # Option 1: HTTPS
   git clone --recurse https://github.com/limxdynamics/humanoid-mujoco-sim.git
-  
+
   # Option 2: SSH
   git clone --recurse git@github.com:limxdynamics/humanoid-mujoco-sim.git
   ```
 
 - 下载运动控制算法：
 
-  ```Bash
+  ```bash
   cd ~/limx_ws
-  
+
   # Option 1: HTTPS
   git clone --recurse https://github.com/limxdynamics/humanoid-rl-deploy-ros2.git
-  
+
   # Option 2: SSH
   git clone --recurse git@github.com:limxdynamics/humanoid-rl-deploy-ros2.git
   ```
-
 
 - 设置机器人型号：如果尚未设置，请按照以下步骤进行设置。
 
   - 通过 Shell 命令 `tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config` 列出可用的机器人类型：
 
-    ```
+    ```bash
     cd ~/limx_ws/humanoid-rl-deploy-ros2/src
     tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config
+    ```
+
+    输出：
+
+    ```text
     humanoid-rl-deploy-ros2/robot_controllers/config
     ├── HU_D03_03
     └── HU_D04_01
-
-    
     ```
 
   - 以`HU_D04_01`（请根据实际机器人类型进行替换）为例，设置机器人型号类型：
 
-    ```
+    ```bash
     echo 'export ROBOT_TYPE=HU_D04_01' >> ~/.bashrc && source ~/.bashrc
     ```
 
-## 3、仿真调试
+### 编译与运行前
 
-- 运行MuJoco 仿真器（推荐Pyhon 3.8 及以上版本）
+第 3、4 节的编译和启动要在多个终端里进行。**每开一个新终端都先执行下面两行**，
+这两节的命令块里不再重复。
+
+```bash
+# 如您安装了 Conda，请先退出：它会覆盖 ROS 的环境设置
+conda deactivate
+
+# 设置 ROS 环境
+source /opt/ros/humble/setup.bash
+```
+
+## 3. 仿真调试
+
+- 运行 MuJoCo 仿真器（推荐 Python 3.8 及以上版本）
 
   - 打开一个 Bash 终端。
 
@@ -213,32 +225,16 @@ ros2 launch robot_hw humanoid_hw_sim.launch.py
 
   - 打开一个 Bash 终端。
 
-  - 请进到您的工作空间，完成编译：
+  - 请进入您的工作空间完成编译：
 
     ```bash
-    # 如您安装了Conda，请临时禁用 Conda 环境
-    # 因为 Conda 会干扰 ROS 的运行环境设置
-    conda deactivate
-    
-    # 设置ROS编译环境
-    source /opt/ros/humble/setup.bash
-    
-    # 编译算法代码
     cd ~/limx_ws/humanoid-rl-deploy-ros2
     colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
     ```
 
-  - 运行算法
+  - 启动
 
     ```bash
-    # 如您安装了Conda，请临时禁用 Conda 环境
-    # 因为 Conda 会干扰 ROS 的运行环境设置
-    conda deactivate
-    
-    # 设置ROS编译环境
-    source /opt/ros/humble/setup.bash
-    
-    # 运行算法
     cd ~/limx_ws/humanoid-rl-deploy-ros2
     source install/setup.bash
     ros2 launch robot_hw humanoid_hw_sim.launch.py
@@ -246,43 +242,35 @@ ros2 launch robot_hw humanoid_hw_sim.launch.py
 
     ![](doc/simulator.gif)
 
-- 虚拟遥控器：仿真的时候可以使用虚拟遥控器来操作机器人。以下是使用虚拟遥控器的具体步骤。
+- 虚拟遥控器：在仿真里用它驱动机器人。
 
   - 打开一个 Bash 终端。
 
-  - 运行虚拟遥控器
+  - 运行：
 
-    ```
+    ```bash
     ~/limx_ws/humanoid-mujoco-sim/robot-joystick/robot-joystick
     ```
 
     ![](doc/robot-joystick.png)
 
-
-  - 这时，您可以使用虚拟遥控器来控制机器人。
+  - 按键操作如下：
 
     | **按键** | **模式**         | **说明**                                                    |
     | -------- | ---------------- | ----------------------------------------------------------- |
-    | L1+Y     | 切换到站立模式   | 如机器人没法站立，请点击MuJoco界面中的“Reset”进行复位一下。 |
+    | L1+Y     | 切换到站立模式   | 如机器人没法站立，请点击 MuJoCo 界面中的“Reset”进行复位一下。 |
     | L1+B     | 切换到打招呼模式 |                                                             |
 
-## 4、真机调试
+## 4. 真机调试
 
-- 设置您电脑IP：确保您的电脑与机器人本体通过外置网口连接。设置您的电脑IP地址为：`10.192.1.200`，并通过Shell命令`ping 10.192.1.2` 能够正常ping通。如下图所示对您的开发电脑进行IP设置：
+- 设置电脑 IP：用网线把电脑接到机器人的外置网口，把电脑 IP 设为 `10.192.1.200`，确认
+  `ping 10.192.1.2` 能通。IP 设置如下图所示：
 
   ![img](doc/ip.png)
 
 - 算法编译：
 
   ```bash
-  # 如您安装了Conda，请临时禁用 Conda 环境
-  # 因为 Conda 会干扰 ROS 的运行环境设置
-  conda deactivate
-  
-  # 设置ROS编译环境
-  source /opt/ros/humble/setup.bash
-  
-  # 编译算法代码
   cd ~/limx_ws/humanoid-rl-deploy-ros2
   colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
   ```
@@ -293,17 +281,9 @@ ros2 launch robot_hw humanoid_hw_sim.launch.py
   - 按电源键开机后，按下遥控器`右摇杆`按键，启动机器人电机。
   - 按下遥控器按键 `R1 + DOWN`切换到开发者模式。在此模式下，用户可以开发自己的运动控制算法。（此模式设置后，下次开机继续生效，如需退出开发者模式请按`R1 + LEFT`退出）。
 
-- 实机部署运行。在Bash终端只需下面Shell命令启动控制算法：
+- 真机部署运行：
 
   ```bash
-  # 如您安装了Conda，请临时禁用 Conda 环境
-  # 因为 Conda 会干扰 ROS 的运行环境设置
-  conda deactivate
-  
-  # 设置ROS编译环境
-  source /opt/ros/humble/setup.bash
-  
-  # 运行算法
   cd ~/limx_ws/humanoid-rl-deploy-ros2
   source install/setup.bash
   ros2 launch robot_hw humanoid_hw.launch.py

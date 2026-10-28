@@ -76,6 +76,7 @@ pip install humanoid-mujoco-sim/limxsdk-lowlevel/python3/amd64/limxsdk-*.whl
 python humanoid-mujoco-sim/simulator.py
 
 # terminal 2: controller
+conda deactivate   # if Conda is installed, it overrides the ROS environment
 source /opt/ros/humble/setup.bash
 cd ~/limx_ws/humanoid-rl-deploy-ros2
 colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
@@ -89,7 +90,10 @@ Then start the virtual remote
 
 ## 1. Deployment Environment Configuration
 
-- Install ROS 2 Humble: Set up a ROS 2 Humble-based algorithm Development Environment on the Ubuntu 22.04 operating system. For installation, please refer to the documentation: https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html, and choose "ros-humble-desktop" for installation. After the installation of ROS 2 Humble is completed, enter the following Shell commands in the Bash end point to install the libraries required by the Development Environment:
+- **Install ROS 2 Humble** (Ubuntu 22.04). Follow
+  https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html and choose
+  `ros-humble-desktop`. Once it is installed, run the following in a Bash terminal to install
+  the libraries the build needs:
 
     ```bash
     sudo apt update
@@ -102,7 +106,6 @@ Then start the virtual remote
                 ros-humble-controller-interface \
                 ros-humble-controller-manager-msgs \
                 ros-humble-control-msgs \
-                ros-humble-controller-interface \
                 ros-humble-gazebo-* \
                 ros-humble-rviz* \
                 ros-humble-rqt-gui \
@@ -113,35 +116,33 @@ Then start the virtual remote
                 ros-humble-ros2-controllers \
                 ros-dev-tools \
                 cmake build-essential libpcl-dev libeigen3-dev libopencv-dev libmatio-dev \
-                python3-pip libboost-all-dev libtbb-dev liburdfdom-dev liborocos-kdl-dev -y
+                python3-pip libboost-all-dev libtbb-dev liburdfdom-dev liborocos-kdl-dev \
+                tree -y
     ```
 
-    
+- **Install ONNX Runtime.** Download the build for your platform from
+  https://github.com/microsoft/onnxruntime/releases/tag/v1.10.0. For Ubuntu 22.04 x86_64:
 
-- Install the onnxruntime dependency, download link:https://github.com/microsoft/onnxruntime/releases/tag/v1.10.0. Please choose the appropriate version to download according to your operating system and platform. For example, on Ubuntu 20.04 x86_64, please follow the steps below for installation:
-  
-    ```Bash
+    ```bash
     wget https://github.com/microsoft/onnxruntime/releases/download/v1.10.0/onnxruntime-linux-x64-1.10.0.tgz
-    
+
     tar xvf onnxruntime-linux-x64-1.10.0.tgz
-    
+
     sudo cp -a onnxruntime-linux-x64-1.10.0/include/* /usr/include
     sudo cp -a onnxruntime-linux-x64-1.10.0/lib/* /usr/lib
     ```
 
-
-
 ## 2. Create a Workspace
 
-You can create an RL deployment development workspace by following these steps:
-- Open a Bash terminal.
-- Create a new directory to store the workspace. For example, you can create a directory named "limx_ws" in the user's home directory:
-    ```Bash
-    mkdir -p ~/limx_ws/src
+- Create a directory for the workspace, for example `limx_ws` in your home directory:
+
+    ```bash
+    mkdir -p ~/limx_ws
     ```
-    
-- Download the MuJoCo simulator
-    ```Bash
+
+- Download the MuJoCo simulator:
+
+    ```bash
     cd ~/limx_ws
 
     # Option 1: HTTPS
@@ -150,9 +151,10 @@ You can create an RL deployment development workspace by following these steps:
     # Option 2: SSH
     git clone --recurse git@github.com:limxdynamics/humanoid-mujoco-sim.git
     ```
-    
+
 - Download the motion control algorithm:
-    ```Bash
+
+    ```bash
     cd ~/limx_ws
 
     # Option 1: HTTPS
@@ -161,29 +163,46 @@ You can create an RL deployment development workspace by following these steps:
     # Option 2: SSH
     git clone --recurse git@github.com:limxdynamics/humanoid-rl-deploy-ros2.git
     ```
-    
+
 - Set the robot model: If not set yet, follow these steps.
 
-  - List the available robot types using the Shell command `tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config` ：
+  - List the available robot types with `tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config`:
 
-    ```
+    ```bash
     cd ~/limx_ws/humanoid-rl-deploy-ros2/src
     tree -L 1 humanoid-rl-deploy-ros2/robot_controllers/config
+    ```
+
+    Output:
+
+    ```text
     humanoid-rl-deploy-ros2/robot_controllers/config
     ├── HU_D03_03
     └── HU_D04_01
-    
     ```
 
   - Take `HU_D04_01` (please replace it with the actual robot type) as an example to set the robot model type:
 
-    ```
+    ```bash
     echo 'export ROBOT_TYPE=HU_D04_01' >> ~/.bashrc && source ~/.bashrc
     ```
 
+### Before you build or launch
+
+Sections 3 and 4 have you build and launch in several terminals. **Every new terminal
+starts with these two lines.** The command blocks there no longer repeat them.
+
+```bash
+# If you have Conda installed, deactivate it: Conda overrides the ROS environment settings
+conda deactivate
+
+# Set up the ROS environment
+source /opt/ros/humble/setup.bash
+```
+
 ## 3. Simulation Debugging
 
-- Run the MuJoco simulator (Python 3.8 or above is recommended)
+- Run the MuJoCo simulator (Python 3.8 or above is recommended)
 
   - Open a Bash terminal.
 
@@ -217,29 +236,13 @@ You can create an RL deployment development workspace by following these steps:
   - Navigate to your workspace and complete the compilation:
 
     ```bash
-    # If you have Conda installed, temporarily deactivate the Conda environment
-    # Because Conda may interfere with the ROS runtime environment settings
-    conda deactivate
-
-    # Set up the ROS compilation environment
-    source /opt/ros/humble/setup.bash
-
-    # Compile the algorithm code
     cd ~/limx_ws/humanoid-rl-deploy-ros2
     colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
     ```
 
-  - Run the algorithm
+  - Launch
 
     ```bash
-    # If you have Conda installed, temporarily deactivate the Conda environment
-    # Because Conda may interfere with the ROS runtime environment settings
-    conda deactivate
-
-    # Set up the ROS compilation environment
-    source /opt/ros/humble/setup.bash
-
-    # Run the algorithm
     cd ~/limx_ws/humanoid-rl-deploy-ros2
     source install/setup.bash
     ros2 launch robot_hw humanoid_hw_sim.launch.py
@@ -247,43 +250,36 @@ You can create an RL deployment development workspace by following these steps:
 
     ![](doc/simulator.gif)
 
-- Virtual remote controller: You can use a virtual remote controller to operate the robot during simulation. The following are the specific steps to use the virtual remote controller.
+- Virtual remote controller: use it to drive the robot in simulation.
 
   - Open a Bash terminal.
 
-  - Run the virtual remote controller
+  - Run it:
 
-    ```
+    ```bash
     ~/limx_ws/humanoid-mujoco-sim/robot-joystick/robot-joystick
     ```
 
     ![](doc/robot-joystick.png)
 
-
-  - At this point, you can use the virtual remote controller to control the robot.
+  - Operate the robot with these buttons:
 
     | **Button** | **Mode**         | **Description**                                                    |
     | -------- | ---------------- | ----------------------------------------------------------- |
-    | L1+Y     | Switch to standing mode   | If the robot cannot stand, click "Reset" in the MuJoco interface to reset it. |
+    | L1+Y     | Switch to standing mode   | If the robot cannot stand, click "Reset" in the MuJoCo interface to reset it. |
     | L1+B     | Switch to greeting mode |                                                             |
 
 ## 4. Real Machine Debugging
 
-- Set your computer's IP: Ensure that your computer is connected to the robot body through an external network port. Set your computer's IP address to: `10.192.1.200`, and you can successfully ping `10.192.1.2` using the Shell command `ping 10.192.1.2`. Set the IP of your development computer as shown in the following figure:
+- Set your computer's IP: plug the computer into the robot's external network port, set the
+  computer's IP address to `10.192.1.200`, and confirm that `ping 10.192.1.2` succeeds.
+  The IP settings are shown below:
 
   ![img](doc/ip.png)
 
 - Algorithm compilation:
 
   ```bash
-  # If you have Conda installed, temporarily deactivate the Conda environment
-  # Because Conda may interfere with the ROS runtime environment settings
-  conda deactivate
-
-  # Set up the ROS compilation environment
-  source /opt/ros/humble/setup.bash
-
-  # Compile the algorithm code
   cd ~/limx_ws/humanoid-rl-deploy-ros2
   colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
   ```
@@ -294,17 +290,9 @@ You can create an RL deployment development workspace by following these steps:
   - After turning on the power, press the right joystick button on the remote controller to start the robot's motors.
   - Press the remote controller buttons `R1 + DOWN` to switch to developer mode. In this mode, users can develop their own motion control algorithms. (This mode will remain effective after the next startup; to exit developer mode, press `R1 + LEFT`).
 
-- Real machine deployment and operation. In the Bash terminal, simply use the following Shell command to start the control algorithm:
+- Real machine deployment: start the control algorithm:
 
   ```bash
-  # If you have Conda installed, temporarily deactivate the Conda environment
-  # Because Conda may interfere with the ROS runtime environment settings
-  conda deactivate
-
-  # Set up the ROS compilation environment
-  source /opt/ros/humble/setup.bash
-
-  # Run the algorithm
   cd ~/limx_ws/humanoid-rl-deploy-ros2
   source install/setup.bash
   ros2 launch robot_hw humanoid_hw.launch.py
